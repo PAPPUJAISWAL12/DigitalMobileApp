@@ -1,0 +1,55 @@
+﻿@page "/NotesPage"
+@using DigitalMobileApp.DBContext
+@using DigitalMobileApp.Models
+
+@inject DatabaseServices _context;
+
+<h3>Add Notes</h3>
+<EditForm OnValidSubmit="AddNotes" Model="n">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="form-floating mb-3">
+        <input @bind="n.Title" class="form-control" id="floatingInput" placeholder="name@example.com">
+        <label for="floatingInput">Title</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input @bind="n.Description" class="form-control" id="floatingInput" placeholder="name@example.com">
+        <label for="floatingInput">Description</label>
+    </div>
+    <div class="my-3">
+        @if (spin == "")
+        {
+            <button type="submit" class="btn btn-primary py-3 w-100">Submit</button>
+        }
+        else
+        {
+            <button type="submit" disabled class="btn btn-primary py-3 w-100">
+                <i class="@spin"></i>
+            </button>
+        }
+    </div>
+
+</EditForm>
+
+@code {
+    Notes n = new();
+    string spin = "";
+    string Message = "";
+    public  async void AddNotes()
+    {
+        spin = "fa-solid fa-circle-notch fa-spin";
+        await _context.AddNotes(n);
+        Message = "Notes Added SuccessFully";
+        spin = "";
+        try
+        {
+           
+        }
+        catch
+        {
+            Message = "Try Again";
+            spin = "";
+        }
+
+    }
+}
