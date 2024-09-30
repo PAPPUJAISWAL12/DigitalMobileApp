@@ -1,6 +1,5 @@
 ﻿@page "/NotesPage"
-@using DigitalMobileApp.DBContext
-@using DigitalMobileApp.Models
+
 
 @inject DatabaseServices _context;
 
@@ -8,6 +7,16 @@
 <EditForm OnValidSubmit="AddNotes" Model="n">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
+    
+    @if (Message == "")
+    {
+
+    }
+    else
+    {
+        <div class="alert alert-success">@Message</div>
+
+    }
     <div class="form-floating mb-3">
         <input @bind="n.Title" class="form-control" id="floatingInput" placeholder="name@example.com">
         <label for="floatingInput">Title</label>
@@ -37,17 +46,21 @@
     string Message = "";
     public  async void AddNotes()
     {
-        spin = "fa-solid fa-circle-notch fa-spin";
-        await _context.AddNotes(n);
-        Message = "Notes Added SuccessFully";
-        spin = "";
+       
         try
         {
-           
+            //spin = "fa-solid fa-circle-notch fa-spin";
+            await _context.AddNotes(n);
+            Message = "Notes Added SuccessFully";
+            spin = "";
         }
         catch
         {
             Message = "Try Again";
+            spin = "";
+        }
+        finally
+        {
             spin = "";
         }
 

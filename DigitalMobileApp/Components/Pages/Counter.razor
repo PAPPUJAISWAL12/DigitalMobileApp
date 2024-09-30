@@ -1,16 +1,51 @@
 ﻿@page "/counter"
-@using DigitalMobileApp.Components.Pages.NotesView;
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-<NotesPage></NotesPage>
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@inject DatabaseServices _context
+<h1>List Of Notes</h1>
+<div class="responsive">
+    <div>@message</div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>S.N</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in listNotes)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <a class="btn btn-primary py-2">Edit</a>
+                        <a class="btn btn-danger py-2" @onclick="()=>DeleteData(item.Id)">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    List<Notes> listNotes = new List<Notes>();
+    int id;
+    string message = "";
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        listNotes = await _context.GetNoteList();        
+
+    }
+    public async Task DeleteData(int id)
+    {
+        var note = listNotes.Where(x => x.Id == id).First();
+        _context.DeleteNotes(note);
+        
+        message = "deleted";
+        StateHasChanged();
+        listNotes =await _context.GetNoteList();
+
     }
 }
